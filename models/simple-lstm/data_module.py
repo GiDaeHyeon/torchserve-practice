@@ -13,7 +13,7 @@ from utils import SimpleTokenizer
 
 
 class IMDBDataset(Dataset):
-    def __init__(self, mode: str, tokenizer: Optional[SimpleTokenizer] = None, max_length: int = 512) -> None:
+    def __init__(self, mode: str, tokenizer: Optional[SimpleTokenizer] = None, max_length: int = 256) -> None:
         super().__init__()
         self.data = IMDB(mode=mode)
         self.datas, self.labels = IMDB(mode=mode).get_data()
@@ -44,10 +44,10 @@ class IMDBDataset(Dataset):
 
 
 class SimpleDataModule(LightningDataModule):
-    def __init__(self, batch_size: int) -> None:
+    def __init__(self, batch_size: int, max_length: int) -> None:
         super().__init__()
-        self.train_dataset = IMDBDataset(mode='train')
-        self.val_dataset = IMDBDataset(mode='test', tokenizer=self.train_dataset.tokenizer)
+        self.train_dataset = IMDBDataset(mode='train', max_length=max_length)
+        self.val_dataset = IMDBDataset(mode='test', tokenizer=self.train_dataset.tokenizer, max_length=max_length)
         self.batch_size = batch_size
         self.num_embeddings = self.train_dataset.num_words
 
